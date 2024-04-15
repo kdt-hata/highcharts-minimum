@@ -1,27 +1,46 @@
 <!-- src/components/DemoChart.vue -->
 <script setup lang="ts">
+//
+type CustomedAxis = Highcharts.Axis & {
+  brokenAxis?: {
+    breakArray: Array<{ from: number; to: number }>
+  }
+  height?: number
+}
+
+type CustomedBrokenAxisPath = Highcharts.SVGElement & {
+  attr: (options: { d: CustomedSVGPathArray }) => void
+}
+
+type CustomedChart = Highcharts.Chart & {
+  brokenAxisPath?: CustomedBrokenAxisPath
+}
+
+type CustomedSVGPathArray = Array<Highcharts.SVGPathCommand | number>
+
 const chartOptions = {
   chart: {
     type: 'bar',
     events: {
-      render() {
-        const chart = this,
-          renderer = chart.renderer,
-          yAxis = chart.yAxis[0],
-          { from, to } = yAxis.brokenAxis.breakArray[0],
-          x = (yAxis.toPixels(from) + yAxis.toPixels(to)) / 2,
-          y = yAxis.height + chart.plotTop,
-          w = 40,
-          path = ['M', x, y + 50, 'L', x, 0]
+      render(this: CustomedChart) {
+        const chart: Highcharts.Chart = this,
+          renderer: Highcharts.SVGRenderer = chart.renderer,
+          yAxis: CustomedAxis = chart.yAxis[0],
+          { from, to } = yAxis.brokenAxis?.breakArray[0] || { from: 0, to: 0 },
+          //   Highcharts のtoPixelsメソッドのpaneCoordinatesパラメーターで、チャート全体を基準としたピクセル座標を返すか ( true )、軸/ペイン自体のみを返すか ( false ) を指定する必要があります。
+          x = (yAxis.toPixels(from, true) + yAxis.toPixels(to, false)) / 2,
+          y = yAxis.height || 0 + chart.plotTop,
+          //   w = 40,
+          path: CustomedSVGPathArray = ['M', x, y + 50, 'L', x, 0]
 
         if (!this.brokenAxisPath) {
           this.brokenAxisPath = renderer
-            .path(path)
+            .path(path as any)
             .attr({
               stroke: 'red',
               'stroke-width': 3
             })
-            .add()
+            .add() as CustomedBrokenAxisPath
         } else {
           this.brokenAxisPath.attr({
             d: path
