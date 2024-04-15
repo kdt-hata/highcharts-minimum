@@ -1,5 +1,10 @@
 <!-- src/components/DemoChart.vue -->
 <script setup lang="ts">
+// interface LabelFormatterContext {
+//   axis: {
+//     defaultLabelFormatter: () => string
+//   }
+// }
 
 const chartOptions = {
   chart: {
@@ -31,7 +36,21 @@ const chartOptions = {
       align: 'high'
     },
     labels: {
-      overflow: 'justify'
+      formatter: function (this: Highcharts.AxisLabelsFormatterContextObject) {
+        const label = this.axis.defaultLabelFormatter.call(this)
+        const lastCharacter = label.toString().slice(-1)
+        let res: string
+        if (lastCharacter === 'k') {
+          let num = label.slice(0, -1)
+          num = num.replace(/\s/g, '')
+          res = (Number(num) * 1000).toLocaleString()
+        } else {
+          res = Number(label).toLocaleString()
+        }
+        return res
+      }
+      // demo has the following
+      //   overflow: 'justify'
     },
     gridLineWidth: 0
   },
