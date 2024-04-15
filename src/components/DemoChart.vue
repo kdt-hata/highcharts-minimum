@@ -1,6 +1,5 @@
 <!-- src/components/DemoChart.vue -->
 <script setup lang="ts">
-import Highcharts from 'highcharts'
 
 const chartOptions = {
   chart: {
