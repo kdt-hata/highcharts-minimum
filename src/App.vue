@@ -1,3 +1,4 @@
+<!-- src/App.vue -->
 <script setup lang="ts">
 import DemoChart from './components/DemoChart.vue'
 </script>
