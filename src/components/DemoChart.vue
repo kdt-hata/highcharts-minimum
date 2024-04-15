@@ -1,10 +1,6 @@
 <!-- src/components/DemoChart.vue -->
 <script setup lang="ts">
-// interface LabelFormatterContext {
-//   axis: {
-//     defaultLabelFormatter: () => string
-//   }
-// }
+
 
 const chartOptions = {
   chart: {
@@ -52,7 +48,13 @@ const chartOptions = {
       // demo has the following
       //   overflow: 'justify'
     },
-    gridLineWidth: 0
+    gridLineWidth: 0,
+    breaks: [
+      {
+        from: 2000,
+        to: 2700
+      }
+    ]
   },
   tooltip: {
     valueSuffix: ' millions'
