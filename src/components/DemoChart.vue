@@ -1,10 +1,34 @@
 <!-- src/components/DemoChart.vue -->
 <script setup lang="ts">
-
-
 const chartOptions = {
   chart: {
-    type: 'bar'
+    type: 'bar',
+    events: {
+      render() {
+        const chart = this,
+          renderer = chart.renderer,
+          yAxis = chart.yAxis[0],
+          { from, to } = yAxis.brokenAxis.breakArray[0],
+          x = (yAxis.toPixels(from) + yAxis.toPixels(to)) / 2,
+          y = yAxis.height + chart.plotTop,
+          w = 40,
+          path = ['M', x, y + 50, 'L', x, 0]
+
+        if (!this.brokenAxisPath) {
+          this.brokenAxisPath = renderer
+            .path(path)
+            .attr({
+              stroke: 'red',
+              'stroke-width': 3
+            })
+            .add()
+        } else {
+          this.brokenAxisPath.attr({
+            d: path
+          })
+        }
+      }
+    }
   },
   title: {
     text: 'Historic World Population by Region',
@@ -52,7 +76,7 @@ const chartOptions = {
     breaks: [
       {
         from: 2000,
-        to: 2700
+        to: 3000
       }
     ]
   },
